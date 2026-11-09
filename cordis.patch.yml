@@ -1,0 +1,35 @@
+# dsh bundle patch for dsh-teamorouter.
+#
+# 1. A starter `teamorouter` route on llm-pi-ai, so the provider exists from
+#    the first boot (one-shot headless runs included). The plugin replaces its
+#    model list with TeamoRouter's live /v1/models list in your profile's own
+#    settings layer once a key is available.
+# 2. The plugin itself. All its config fields are optional.
+- id: llm-pi-ai
+  config:
+    providers:
+      teamorouter:
+        displayName: TeamoRouter
+        api: openai-completions
+        baseURL: https://api.teamorouter.com/v1
+        apiKeyEnv: TEAMOROUTER_API_KEY
+        headers:
+          X-Client-Source: dsh-teamorouter
+        defaultContextWindow: 200000
+        defaultMaxTokens: 32000
+        models:
+          - { id: claude-sonnet-5-5, name: Claude Sonnet 5.5, input: [text, image] }
+          - { id: claude-opus-5-5, name: Claude Opus 5.5, input: [text, image] }
+          - { id: gpt-6-sol, name: GPT-6 Sol, input: [text, image] }
+          - { id: deepseek-v4-pro, name: DeepSeek V4 Pro }
+          - { id: deepseek-v4-flash, name: DeepSeek V4 Flash }
+          - { id: gemini-3.8-flash, name: Gemini 3.8 Flash, input: [text, image] }
+
+- insert:
+    - id: teamorouter
+      name: 'dsh-teamorouter'
+      config:
+        baseURL: 'https://api.teamorouter.com/v1'
+        apiKeyEnv: 'TEAMOROUTER_API_KEY'
+        # include: ['claude-*', 'gpt-6*', 'deepseek-*']
+        # exclude: ['*-free']
